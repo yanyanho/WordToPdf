@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-lazy-init="true">
+
+ 
+	<!-- 启动注解  -->
+	<context:annotation-config />
+
+    <bean id="putFileToWindowsService" 
+        class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">  
+        <property name="serviceUrl"  
+            value="https://contracts.nq.com/putFileToWindows.service" />  
+            <!-- 正是环境 https://contracts.nq.com/putFileToWindows.service-->
+            <!-- 测试环境 http://192.168.36.141:8080/BOSS_CONTRACT_MANAGE_PLATFORM/putFileToWindows.service-->
+            <!--http://192.168.33.70:8090/contract_manage/putFileToWindows.service -->
+        <property name="serviceInterface"  
+            value="com.netqin.util.wordToPdf.service.IPutFileToWindowsService" />  
+    </bean>
+    
+        <bean id="putFileToLinuxServiceImpl"  
+        class="com.netqin.util.wordToPdf.service.impl.PutFileToLinuxServiceImpl" />  
+    <bean id="putFileToLinuxService"  
+        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">  
+        <property name="service" ref="putFileToLinuxServiceImpl" />  
+        <property name="serviceInterface"  
+            value="com.netqin.util.wordToPdf.service.IPutFileToLinuxService" />  
+    </bean>  
+    <bean id="urlMapping2"  
+        class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">  
+        <property name="mappings">  
+            <props>  
+                <prop key="/putFileToLinux.service">putFileToLinuxService</prop>  
+            </props>  
+        </property>  
+    </bean>  
+      <bean class="com.netqin.util.wordToPdf.WTopTools" lazy-init="false"></bean>
+</beans>  
